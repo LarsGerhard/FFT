@@ -1,12 +1,14 @@
 from matplotlib.pyplot import plot, legend, show, figure, subplot, title, tight_layout, xlim
 from numpy import arange, sin, sqrt, pi, real, imag
 from scipy.fftpack import fft
-
+import scipy.io.wavfile as wav
+import sounddevice as sd
 
 # time dimension
 
-Fs = 500  # Hz  sampling frequency: samples per second
-nt = 2000  # number of samples in record
+file_name = 'Chirping-Birds.wav'  # Path to your downloaded sound file
+Fs, f = wav.read(file_name)
+nt = len(f)
 T = nt / Fs  # Time period of record
 dT = 1 / Fs  # sec   time between samples
 
@@ -36,23 +38,6 @@ f3 = 2 * freqf
 f4 = -5 * freqf
 
 print('Frequencies selected:', f1, f2, f3, f4)
-
-# Create f(t) = A sin(f1 2 pi t) + B sin(f2 2 pi t)  + C cos(f3 2 pi t) + D cos(f4 2 pi t) + E%
-# Where A B C D E are integers between -10 and + 10
-# Use your time array defined above so f is an array
-# with values at each of these times.
-# what is the equation for a sine or cos wave with frequency w1?
-#    this is an array over all values of time array t, not a "function"
-#    sin and cos can opperate on an array so no loop needed
-#    remember factor of 2pi
-#    basically, just write it like math!
-A = -3
-B = 5
-C = -1
-D = 8
-E = 6
-
-f = A * sin(f1 * 2 * pi * t) + B * sin(f2 * 2 * pi * t) + C * sin(f3 * 2 * pi * t) + D * sin(f4 * 2 * pi * t) + E
 
 # take FFT of this function
 F = fft(f)
@@ -84,5 +69,7 @@ xmax = max([f1, f2, f3, f4]) * 1.15  # find max value and pad a bit (15%)
 xlim(0, xmax)
 
 tight_layout()  # prevent squished plot (matplotlib kludge)
+
+sd.play(f, Fs)
 
 show()
