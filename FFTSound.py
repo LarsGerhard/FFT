@@ -1,13 +1,15 @@
-from matplotlib.pyplot import plot, legend, show, figure, subplot, title, tight_layout, xlim
-from numpy import arange, sin, sqrt, pi, real, imag
-from scipy.fftpack import fft
 import scipy.io.wavfile as wav
 import sounddevice as sd
+from matplotlib.pyplot import plot, legend, show, figure, subplot, title, tight_layout
+from numpy import arange, sqrt, real, imag
+from scipy.fftpack import fft
 
 # time dimension
 
 file_name = 'Chirping-Birds.wav'  # Path to your downloaded sound file
-Fs, f = wav.read(file_name)
+Fs, fst = wav.read(file_name)
+f = fst[:, 0]
+
 nt = len(f)
 T = nt / Fs  # Time period of record
 dT = 1 / Fs  # sec   time between samples
@@ -16,7 +18,7 @@ t = arange(0, T, dT)  # time array in seconds using arange(start,stop,step)
 #   note that arange actually stops *before* stop time which
 #   is what we want (in a periodic function t=0 and t=T are the same)
 print(t[0], t[-1], dT)
-
+t = t[(t < 0.4)]
 # frequency dimension
 
 freqf = 1 / T  # Hz   fundamental frequency (lowest frequency)
@@ -31,14 +33,6 @@ freq = arange(0, freqmax, 1 / T)  # frequency array using arange(start,stop,step
 
 print('Fundamental period and Nyquist Freq', T, freqmax)
 
-# select four frequencies
-f1 = 10 * freqf
-f2 = freqf
-f3 = 2 * freqf
-f4 = -5 * freqf
-
-print('Frequencies selected:', f1, f2, f3, f4)
-
 # take FFT of this function
 F = fft(f)
 
@@ -51,6 +45,8 @@ b = -2 * imag(F[:nfmax]) / nt  # form the b coefficients
 p = sqrt(a ** 2 + b ** 2)  # form power spectrum
 
 # make some plots
+
+f = f[:len(t)]
 
 figure(1)
 
@@ -65,8 +61,6 @@ plot(freq, p, '-', label='Power')
 legend()
 
 title('FFT Fourier Coefficients')
-xmax = max([f1, f2, f3, f4]) * 1.15  # find max value and pad a bit (15%)
-xlim(0, xmax)
 
 tight_layout()  # prevent squished plot (matplotlib kludge)
 

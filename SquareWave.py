@@ -1,4 +1,4 @@
-from numpy import linspace,array,zeros,log,exp,sin,cos,sqrt,pi,e, ones, arange, zeros, real, imag, sign
+from numpy import linspace,array,zeros,log,exp,sin,cos,sqrt,pi,e, ones, arange, zeros, real, sign, imag
 from matplotlib.pyplot import plot,xlabel,ylabel,legend,show, figure, subplot, title, tight_layout, stem
 
 from scipy.fft import fft, fftshift
@@ -7,7 +7,7 @@ from scipy.fft import fft, fftshift
 
 T = 10 # sec
 nt = 2**11 # fft likes powers of 2
-dt = T/nt # time step
+dt = T / nt # time step
 
 # 1 use arange to fill in time array t
 t = arange(-T / 2, T / 2, dt) #  -T/2 <= t < +T/2
@@ -20,7 +20,7 @@ print(t[0],t[-1],dt)
 # Create the square function in array f, matching the time array
 
 # 2 fill in the function
-f =   # note that t is an array already and f is same size.
+f = sign(t) # note that t is an array already and f is same size.
 
 # take FFT
 # use fftshift to shift function one half interval since fft assumes 0<t<T
@@ -39,14 +39,16 @@ ban = zeros(nfmax)
 
 # 3 Fill in the math for the coefficients
 for n in range(1,nfmax):
-    ban[n]=
+    ban[n]= (2 / (n * pi)) * (1 - (-1)**n)
 
 # Reconstruct the sawtooth by suming fourier series for small n
 
 # Sum the Fourier Series
-Nrecon = 10
+Nrecon = 20
 fr = ones(nt)*a[0] # fill time series with constant term
 # 4 Use a for loop to do the Fourier Sum above, for n=1...Nrecon
+for n in range(1,Nrecon):
+    fr += ban[n] * sin((n * 2 * pi * t) / T)
 
 ## make some plots
 
